@@ -14,17 +14,14 @@ class CreateAdminUserSeeder extends Seeder
      */
     public function run(): void
     {
-
-        // Crear rol de administrador
-        //$adminRole = Role::create(['name' => 'admin']);
-
-        User::create([
-            'name' => 'admin',
+        // Creamos el usuario administrador
+        $admin = User::create([
+            'name' => 'Super Admin',
             'email' => 'admin@example.com',
             'password' => Hash::make('password'), // bcrypt('password'),
         ]);
 
-        // Asignar rol de administrador
-        // $admin->assignRole($adminRole);
+        // Asignar rol de super_admin
+        $admin->assignRole('super_admin');
     }
 }

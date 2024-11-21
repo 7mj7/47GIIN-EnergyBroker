@@ -27,7 +27,7 @@ return [
     ],
 
     'panel_user' => [
-        'enabled' => true,
+        'enabled' => false, // Ocultamos el recurso al resto de usuarios
         'name' => 'panel_user',
     ],
 
