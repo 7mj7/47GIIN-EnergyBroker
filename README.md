@@ -74,3 +74,32 @@ php artisan serve
 ```
 
 La aplicación estará disponible en http://localhost:8000
+
+## Documentación
+
+### 📚 Documentación Técnica
+- **Seguridad**
+  - [Configuración de Autenticación](docs/technical/security/authentication.md)
+<!--
+  - [Roles y Permisos](docs/technical/security/roles-permissions.md)
+  - [Configuración Inicial](docs/technical/security/initial-setup.md)
+-->
+<!--
+- **Configuración del Sistema**
+  - [Parámetros Globales](docs/technical/configuration/parameters.md)
+  - [Variables de Entorno](docs/technical/configuration/environment.md)
+
+- **Base de Datos**
+  - [Estructura](docs/technical/database/structure.md)
+  - [Migraciones](docs/technical/database/migrations.md)
+  - [Seeders](docs/technical/database/seeders.md)
+
+### 🔧 Guías de Instalación
+- [Requisitos del Sistema](docs/installation/requirements.md)
+- [Guía de Instalación](docs/installation/setup.md)
+- [Configuración Post-Instalación](docs/installation/post-setup.md)
+
+### 👥 Guías de Usuario
+- [Manual de Usuario](docs/user/manual.md)
+- [FAQ](docs/user/faq.md)
+-->
