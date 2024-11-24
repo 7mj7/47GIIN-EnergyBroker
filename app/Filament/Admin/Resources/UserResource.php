@@ -61,6 +61,9 @@ class UserResource extends Resource
                     ->relationship('roles', 'name')->preload()
                     ->multiple()
                     ->required(),
+                Forms\Components\Toggle::make('is_active')
+                    ->label('Usuario Activo')
+                    ->default(true),
             ]);
     }
 
@@ -80,6 +83,10 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('roles.name')
                     ->label('Roles')
                     ->badge(),
+                Tables\Columns\ToggleColumn::make('is_active')
+                    ->label('Estado')
+                    ->onColor('success')
+                    ->offColor('danger'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
