@@ -37,33 +37,45 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->label('Nombre')
-                    ->autocomplete(false)
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->label('Email')
-                    ->email()
-                    ->autocomplete(false)
-                    ->required()
-                    ->maxLength(255),
+                Forms\Components\Section::make("")
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Nombre')
+                            ->autocomplete(false)
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('email')
+                            ->label('Email')
+                            ->email()
+                            ->autocomplete(false)
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('password')
+                            ->label('Contraseña')
+                            ->password()
+                            ->dehydrateStateUsing(fn($state) => Hash::make($state))
+                            ->dehydrated(fn($state) => filled($state))
+                            ->required(fn(Page $livewire): bool => $livewire instanceof CreateUser)
+                            ->autocomplete(false)
+                            ->maxLength(255),
+                        Forms\Components\Select::make('roles')
+                            ->relationship('roles', 'name')->preload()
+                            ->multiple()
+                            ->required(),
+                        Forms\Components\Toggle::make('is_active')
+                            ->label('Usuario Activo')
+                            ->default(true)
+                            ->visible(function ($get, $record) {
+                                // Si estamos editando un registro y el id es 1 (administrador), ocultamos el campo
+                                if ($record && $record->id === 1) {
+                                    return false;
+                                }
+                                return true;
+                            }),
+                    ])
+                    ->columns(2),
                 //Forms\Components\DateTimePicker::make('email_verified_at'),
-                Forms\Components\TextInput::make('password')
-                    ->label('Contraseña')
-                    ->password()
-                    ->dehydrateStateUsing(fn($state) => Hash::make($state))
-                    ->dehydrated(fn($state) => filled($state))
-                    ->required(fn(Page $livewire): bool => $livewire instanceof CreateUser)
-                    ->autocomplete(false)
-                    ->maxLength(255),
-                Forms\Components\Select::make('roles')
-                    ->relationship('roles', 'name')->preload()
-                    ->multiple()
-                    ->required(),
-                Forms\Components\Toggle::make('is_active')
-                    ->label('Usuario Activo')
-                    ->default(true),
+
             ]);
     }
 

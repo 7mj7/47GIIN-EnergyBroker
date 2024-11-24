@@ -48,4 +48,15 @@ class User extends Authenticatable
             'is_active' => 'boolean', // Usuario Activado/Desactivado
         ];
     }
+
+    protected static function booted()
+    {
+        static::updating(function ($user) {
+            if ($user->id === 1 && $user->isDirty('is_active') && $user->is_active === false) {
+                $user->is_active = true; // Revertir el cambio
+                //throw new \Exception('No puedes desactivar al usuario administrador principal.');
+                // Opcional: Registrar un log o tomar otra acción silenciosa
+            }
+        });
+    }
 }
