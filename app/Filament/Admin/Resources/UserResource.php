@@ -12,6 +12,11 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Resources\Pages\Page;
+use Illuminate\Support\Facades\Hash;
+use App\Filament\Resources\UserResource\Pages\CreateUser;
+use Illuminate\Database\Eloquent\Collection;
+use Filament\Notifications\Notification;
 
 class UserResource extends Resource
 {
@@ -32,21 +37,55 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->label('Nombre')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->label('Email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
+                Forms\Components\Section::make("")
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->label('Nombre')
+                            ->autocomplete(false)
+                            ->required()
+                            ->maxLength(255)
+                            ->columnSpan(2),
+                        Forms\Components\TextInput::make('email')
+                            ->label('Email')
+                            ->email()
+                            ->autocomplete(false)
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\TextInput::make('password')
+                            ->label('Contraseña')
+                            ->password()
+                            ->dehydrateStateUsing(fn($state) => Hash::make($state))
+                            ->dehydrated(fn($state) => filled($state))
+                            ->required(fn(Page $livewire): bool => $livewire instanceof CreateUser)
+                            ->autocomplete(false)
+                            ->maxLength(255)
+                            ->rules([
+                                'min:8',
+                                'regex:/^(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>]).*$/',
+                            ])
+                            ->validationAttribute('contraseña')
+                            ->validationMessages([
+                                'min' => 'La :attribute debe tener al menos :min caracteres.',
+                                'regex' => 'La :attribute debe incluir al menos un número y un carácter especial.',
+                            ]),
+                        Forms\Components\Select::make('roles')
+                            ->relationship('roles', 'name')->preload()
+                            ->multiple()
+                            ->required(),
+                        Forms\Components\Toggle::make('is_active')
+                            ->label('Usuario Activo')
+                            ->default(true)
+                            ->visible(function ($get, $record) {
+                                // Si estamos editando un registro y el id es 1 (administrador), ocultamos el campo
+                                if ($record && $record->id === 1) {
+                                    return false;
+                                }
+                                return true;
+                            }),
+                    ])
+                    ->columns(2),
                 //Forms\Components\DateTimePicker::make('email_verified_at'),
-                Forms\Components\TextInput::make('password')
-                    ->label('Contraseña')
-                    ->password()
-                    ->required()
-                    ->maxLength(255),
+
             ]);
     }
 
@@ -63,6 +102,12 @@ class UserResource extends Resource
                 /*Tables\Columns\TextColumn::make('email_verified_at')
                     ->dateTime()
                     ->sortable(),*/
+                Tables\Columns\TextColumn::make('roles.name')
+                    ->label('Roles')
+                    ->badge(),
+                Tables\Columns\IconColumn::make('is_active')
+                    ->label('Activo')
+                    ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -81,7 +126,18 @@ class UserResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->before(function (Collection $records, Tables\Actions\DeleteBulkAction $action) {
+                            // Verificar si alguno de los registros seleccionados es el ID 1
+                            if ($records->contains('id', 1)) {
+                                Notification::make()
+                                    ->danger()
+                                    ->title('No se puede eliminar el usuario administrador')
+                                    ->send();
+
+                                $action->cancel();
+                            }
+                        }),
                 ]),
             ]);
     }

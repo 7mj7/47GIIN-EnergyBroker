@@ -60,9 +60,16 @@ class UserPolicy
      * @param  \App\Models\User  $user
      * @return bool
      */
-    public function delete(User $user): bool
+    //public function delete(User $user): bool
+    public function delete(User $authenticatedUser, User $targetUser): bool
     {
-        return $user->can('delete_user');
+
+        // Prevenir la eliminación del usuario ID 1
+        if ($targetUser->id === 1) {
+            return false;
+        }
+
+        return $authenticatedUser->can('delete_user');
     }
 
     /**
