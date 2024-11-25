@@ -43,7 +43,8 @@ class UserResource extends Resource
                             ->label('Nombre')
                             ->autocomplete(false)
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->columnSpan(2),
                         Forms\Components\TextInput::make('email')
                             ->label('Email')
                             ->email()
@@ -57,7 +58,16 @@ class UserResource extends Resource
                             ->dehydrated(fn($state) => filled($state))
                             ->required(fn(Page $livewire): bool => $livewire instanceof CreateUser)
                             ->autocomplete(false)
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->rules([
+                                'min:8',
+                                'regex:/^(?=.*[0-9])(?=.*[!@#$%^&*(),.?":{}|<>]).*$/',
+                            ])
+                            ->validationAttribute('contraseña')
+                            ->validationMessages([
+                                'min' => 'La :attribute debe tener al menos :min caracteres.',
+                                'regex' => 'La :attribute debe incluir al menos un número y un carácter especial.',
+                            ]),
                         Forms\Components\Select::make('roles')
                             ->relationship('roles', 'name')->preload()
                             ->multiple()
@@ -95,10 +105,9 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('roles.name')
                     ->label('Roles')
                     ->badge(),
-                Tables\Columns\ToggleColumn::make('is_active')
-                    ->label('Estado')
-                    ->onColor('success')
-                    ->offColor('danger'),
+                Tables\Columns\IconColumn::make('is_active')
+                    ->label('Activo')
+                    ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
