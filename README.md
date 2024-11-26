@@ -80,6 +80,8 @@ La aplicación estará disponible en http://localhost:8000
 ### 📚 Documentación Técnica
 - **Seguridad**
   - [Configuración de Autenticación](docs/technical/security/authentication.md)
+- **Configuración**
+  - [Sistema de Correo Electrónico](docs/technical/email-configuration.md)
 <!--
   - [Roles y Permisos](docs/technical/security/roles-permissions.md)
   - [Configuración Inicial](docs/technical/security/initial-setup.md)
