@@ -9,7 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
-{    
+{
     use HasFactory, Notifiable, HasRoles;
     use Notifiable; // para notificaciones
 
@@ -22,7 +22,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'is_active',
+        'is_active',    // Usuario Activado/Desactivado
+        'phone1',       // Telefono Principal
     ];
 
     /**

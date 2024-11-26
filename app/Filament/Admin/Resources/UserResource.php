@@ -18,6 +18,8 @@ use App\Filament\Resources\UserResource\Pages\CreateUser;
 use Illuminate\Database\Eloquent\Collection;
 use Filament\Notifications\Notification;
 
+use Filament\Tables\Filters\SelectFilter;
+
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
@@ -84,6 +86,23 @@ class UserResource extends Resource
                             }),
                     ])
                     ->columns(2),
+
+                Forms\Components\Section::make("Datos de contacto")
+                    ->schema([
+                        Forms\Components\TextInput::make('phone1')
+                            ->tel()
+                            ->label('Teléfono principal')
+                            ->regex('/^(?:\+34|0034)?[6-9][0-9]{8}$/')
+                            ->validationMessages([
+                                'regex' => 'Debe ser un número español válido (opcional +34 o 0034, seguido de 9 dígitos)',
+                            ])
+                            ->helperText('Ejemplos: 666777888, +34666777888, 0034666777888')
+                            //->placeholder('+34666777888'),
+                            ->autocomplete(false),
+                    ])->columns(2),
+
+
+
                 //Forms\Components\DateTimePicker::make('email_verified_at'),
 
             ]);
@@ -98,6 +117,9 @@ class UserResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                     ->label('Email')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('phone1')
+                    ->label('Teléfono')
                     ->searchable(),
                 /*Tables\Columns\TextColumn::make('email_verified_at')
                     ->dateTime()
@@ -118,7 +140,11 @@ class UserResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('roles')
+                ->relationship('roles', 'name')
+                ->label('Filtrar por Rol')
+                ->multiple()
+                ->preload()
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
