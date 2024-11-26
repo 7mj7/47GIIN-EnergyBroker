@@ -1,7 +1,7 @@
 # Configuración del Sistema de Correo Electrónico
 
 ## Proveedor SMTP
-El sistema utiliza mail.com como proveedor de servicios SMTP para el envío de correos electrónicos.
+El sistema requiere la configuración de un servidor SMTP para el envío de correos electrónicos.
 
 ## Variables de Entorno
 Configurar las siguientes variables en el archivo `.env`:
