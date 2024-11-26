@@ -3,12 +3,16 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use Filament\Panel;
 
-class User extends Authenticatable
+
+class User extends Authenticatable implements FilamentUser
 {
     use HasFactory, Notifiable, HasRoles;
     use Notifiable; // para notificaciones
@@ -59,5 +63,10 @@ class User extends Authenticatable
                 // Opcional: Registrar un log o tomar otra acción silenciosa
             }
         });
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return true;//str_ends_with($this->email, '@yourdomain.com') && $this->hasVerifiedEmail();
     }
 }
