@@ -72,8 +72,12 @@ class UserResource extends Resource
                             ]),
                         Forms\Components\Select::make('roles')
                             ->relationship('roles', 'name')->preload()
+                            ->preload()
                             ->multiple()
-                            ->required(),
+                            ->required()
+                            ->validationMessages([
+                                'required' => 'El usuario debe tener al menos un rol.',
+                            ]),
                         Forms\Components\Toggle::make('is_active')
                             ->label('Usuario Activo')
                             ->default(true)
