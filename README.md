@@ -82,26 +82,6 @@ La aplicación estará disponible en http://localhost:8000
   - [Configuración de Autenticación](docs/technical/security/authentication.md)
 - **Configuración**
   - [Sistema de Correo Electrónico](docs/technical/email-configuration.md)
-<!--
-  - [Roles y Permisos](docs/technical/security/roles-permissions.md)
-  - [Configuración Inicial](docs/technical/security/initial-setup.md)
--->
-<!--
-- **Configuración del Sistema**
-  - [Parámetros Globales](docs/technical/configuration/parameters.md)
-  - [Variables de Entorno](docs/technical/configuration/environment.md)
-
-- **Base de Datos**
-  - [Estructura](docs/technical/database/structure.md)
-  - [Migraciones](docs/technical/database/migrations.md)
-  - [Seeders](docs/technical/database/seeders.md)
-
-### 🔧 Guías de Instalación
-- [Requisitos del Sistema](docs/installation/requirements.md)
-- [Guía de Instalación](docs/installation/setup.md)
-- [Configuración Post-Instalación](docs/installation/post-setup.md)
-
-### 👥 Guías de Usuario
-- [Manual de Usuario](docs/user/manual.md)
-- [FAQ](docs/user/faq.md)
--->
+  - [Supervisor y Workers](docs/technical/supervisor-setup.md)
+- **Extensiones PHP**
+  - [Configuración PCNTL](docs/technical/extensions/pcntl.md)
