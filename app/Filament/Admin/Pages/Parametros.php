@@ -109,7 +109,7 @@ class Parametros extends Page
                 'max:255'
             ],
             'parametrosContacto.telefono' => [
-                'required',
+                //'required',
                 'regex:/^(?:\+34|0034)?[6-9][0-9]{8}$/'
             ],
             'parametrosFiscales.nombre' => [
