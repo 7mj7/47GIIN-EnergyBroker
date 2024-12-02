@@ -20,6 +20,8 @@ class DatabaseSeeder extends Seeder
             CreateAdminUserSeeder::class,
             // Creamos las comercializadoras
             ComercializadorasSeeder::class,
+            // Creamos los códigos postales
+            CodigosPostalesSeeder::class
         ]);
 
     }
