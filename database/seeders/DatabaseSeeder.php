@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+// use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
             ShieldSeeder::class,
             // Luego creamos el usuario admin y le asignamos el rol
             CreateAdminUserSeeder::class,
+            // Creamos las comercializadoras
+            ComercializadorasSeeder::class,
         ]);
 
     }
