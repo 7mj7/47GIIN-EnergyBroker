@@ -2,23 +2,24 @@
 
 namespace App\Filament\Admin\Resources;
 
-use App\Filament\Admin\Resources\UserResource\Pages;
-use App\Filament\Admin\Resources\UserResource\RelationManagers;
-use App\Models\User;
 use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
+use App\Models\User;
 use Filament\Tables;
+use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Models\EquipoVenta;
+use Filament\Resources\Resource;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\Hash;
-use App\Filament\Resources\UserResource\Pages\CreateUser;
-use Illuminate\Database\Eloquent\Collection;
 use Filament\Notifications\Notification;
-
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Admin\Resources\UserResource\Pages;
+
+use App\Filament\Resources\UserResource\Pages\CreateUser;
+use App\Filament\Admin\Resources\UserResource\RelationManagers;
 
 class UserResource extends Resource
 {
@@ -88,6 +89,10 @@ class UserResource extends Resource
                                 }
                                 return true;
                             }),
+                        Forms\Components\Select::make('equipo_venta_id')
+                            ->label('Equipo de Venta')
+                            ->options(EquipoVenta::all()->pluck('nombre', 'id'))
+                            ->searchable(),
                     ])
                     ->columns(2),
 
@@ -134,6 +139,9 @@ class UserResource extends Resource
                 Tables\Columns\IconColumn::make('is_active')
                     ->label('Activo')
                     ->boolean(),
+                Tables\Columns\TextColumn::make('equipoVenta.nombre')
+                    ->label('Equipo de Venta')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -145,10 +153,10 @@ class UserResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('roles')
-                ->relationship('roles', 'name')
-                ->label('Filtrar por Rol')
-                ->multiple()
-                ->preload()
+                    ->relationship('roles', 'name')
+                    ->label('Filtrar por Rol')
+                    ->multiple()
+                    ->preload()
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),

@@ -4,12 +4,13 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use Filament\Panel;
+use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Notifications\Notifiable;
 use Filament\Models\Contracts\FilamentUser;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Spatie\Permission\Traits\HasRoles;
-use Filament\Panel;
 
 
 class User extends Authenticatable implements FilamentUser
@@ -28,6 +29,7 @@ class User extends Authenticatable implements FilamentUser
         'password',
         'is_active',    // Usuario Activado/Desactivado
         'phone1',       // Telefono Principal
+        'equipo_venta_id', // Equipo de Venta
     ];
 
     /**
@@ -69,4 +71,9 @@ class User extends Authenticatable implements FilamentUser
     {
         return true;//str_ends_with($this->email, '@yourdomain.com') && $this->hasVerifiedEmail();
     }
+
+    public function equipoVenta(): BelongsTo
+    {
+        return $this->belongsTo(EquipoVenta::class);
+    }    
 }
