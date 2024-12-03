@@ -24,6 +24,8 @@ class DatabaseSeeder extends Seeder
             CodigosPostalesSeeder::class,
             // Creamos las tarifas de acceso
             TarifasAccesoSeeder::class,
+            // Creamos los equipos de venta
+            EquiposVentaSeeder::class
         ]);
 
     }
