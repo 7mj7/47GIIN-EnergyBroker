@@ -88,7 +88,11 @@ class EquipoVentaResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\TernaryFilter::make('activo')
+                    ->label('Estado')
+                    ->trueLabel('Activos')
+                    ->falseLabel('Inactivos')
+                    ->placeholder('Todos')
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
