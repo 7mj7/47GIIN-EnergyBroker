@@ -18,7 +18,7 @@ class ProvinciaResource extends Resource
 {
     protected static ?string $model = Provincia::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-map';
     protected static ?string $navigationGroup = 'Tablas';
 
     // Oculta el botón de crear

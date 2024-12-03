@@ -20,7 +20,7 @@ class CodigoPostalResource extends Resource
 {
     protected static ?string $model = CodigoPostal::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-map-pin';
 
     protected static ?string $modelLabel = 'Código Postal';
     protected static ?string $pluralModelLabel = 'Códigos Postales';
