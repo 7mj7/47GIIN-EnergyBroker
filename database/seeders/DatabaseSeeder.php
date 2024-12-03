@@ -21,7 +21,9 @@ class DatabaseSeeder extends Seeder
             // Creamos las comercializadoras
             ComercializadorasSeeder::class,
             // Creamos los códigos postales
-            CodigosPostalesSeeder::class
+            CodigosPostalesSeeder::class,
+            // Creamos las tarifas de acceso
+            TarifasAccesoSeeder::class,
         ]);
 
     }
