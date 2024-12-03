@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\TextArea;
 
 class EquipoVentaResource extends Resource
 {
@@ -58,7 +59,7 @@ class EquipoVentaResource extends Resource
                             ->required()
                             ->inline(false)
                             ->default(true),
-                        Forms\Components\TextArea::make('descripcion')
+                        TextArea::make('descripcion')
                             ->label('Descripción')
                             ->columnSpan(2)
                     ])->columns(2),
