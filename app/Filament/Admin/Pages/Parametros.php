@@ -8,6 +8,8 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use App\Models\Parametro;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
+use Filament\Forms\Components\Select;
+use App\Models\Provincia;
 
 
 use Filament\Pages\Page;
@@ -46,10 +48,12 @@ class Parametros extends Page
                 ->schema([
                     TextInput::make('parametrosFiscales.nombre')
                         ->label('Nombre de la Empresa')
+                        ->required()
                         ->statePath('parametrosFiscales.nombre')
                         ->columnSpan(2),
                     TextInput::make('parametrosFiscales.nif')
                         ->label('NIF')
+                        ->required()
                         ->statePath('parametrosFiscales.nif'),
                     TextInput::make('parametrosFiscales.direccion')
                         ->label('Dirección')
@@ -61,9 +65,14 @@ class Parametros extends Page
                     TextInput::make('parametrosFiscales.poblacion')
                         ->label('Poblacion')
                         ->statePath('parametrosFiscales.poblacion'),
-                    TextInput::make('parametrosFiscales.provincia')
+                    /*TextInput::make('parametrosFiscales.provincia')
                         ->label('Provincia')
-                        ->statePath('parametrosFiscales.provincia'),
+                        ->statePath('parametrosFiscales.provincia'),*/
+                    Select::make('parametrosFiscales.provincia')
+                        ->label('Provincia')
+                        ->options(Provincia::all()->pluck('nombre', 'id'))
+                        ->searchable()                        
+                        ->statePath('parametrosFiscales.provincia')
                 ])->columns(3),
 
 
@@ -104,7 +113,7 @@ class Parametros extends Page
     {
         return [
             'parametrosContacto.email' => [
-                'required',
+                //'required',
                 'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/',
                 'max:255'
             ],
@@ -124,7 +133,7 @@ class Parametros extends Page
                 'regex:/^([ABCDEFGHJKLMNPQRSUVW])(\d{7})([0-9A-J])$|^([0-9]{8})([A-Z])$/'
             ],
             'parametrosFiscales.codigo_postal' => [
-                'required',
+                //'required',
                 'regex:/^[0-9]{5}$/'
             ]
         ];
@@ -135,14 +144,17 @@ class Parametros extends Page
         return [
             // Parametros Fiscales            
             'parametrosFiscales.nombre.min' => 'El nombre debe tener al menos 3 caracteres', // Mensaje personalizado para min
+            'parametrosFiscales.nombre.required' => 'El nombre es obligatorio',
             'parametrosFiscales.nif.regex' => 'El NIF/CIF debe tener un formato valido',
+            'parametrosFiscales.nif.required' => 'El NIF/CIF es obligatorio',
             'parametrosFiscales.codigo_postal.regex' => 'El código postal debe tener 5 dígitos',
+
 
             // Parametros de Contacto
             //'parametrosContacto.email.required' => 'El email es obligatorio',
             'parametrosContacto.email.regex' => 'El formato del email no es válido',
             'parametrosContacto.telefono.regex' => 'El teléfono debe ser un número español válido',
-    
+
         ];
     }
 
