@@ -12,6 +12,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\Textarea;
 
 class EquipoVentaResource extends Resource
 {
@@ -58,7 +59,7 @@ class EquipoVentaResource extends Resource
                             ->required()
                             ->inline(false)
                             ->default(true),
-                        Forms\Components\TextArea::make('descripcion')
+                        Textarea::make('descripcion')
                             ->label('Descripción')
                             ->columnSpan(2)
                     ])->columns(2),
@@ -88,7 +89,11 @@ class EquipoVentaResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\TernaryFilter::make('activo')
+                    ->label('Estado')
+                    ->trueLabel('Activos')
+                    ->falseLabel('Inactivos')
+                    ->placeholder('Todos')
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

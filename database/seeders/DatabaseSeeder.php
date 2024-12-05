@@ -14,10 +14,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            // Primero ejecutamos ShieldSeeder para generar los roles y permisos
-            ShieldSeeder::class,
-            // Luego creamos el usuario admin y le asignamos el rol
-            CreateAdminUserSeeder::class,
+            
             // Creamos las comercializadoras
             ComercializadorasSeeder::class,
             // Creamos los códigos postales
@@ -25,7 +22,15 @@ class DatabaseSeeder extends Seeder
             // Creamos las tarifas de acceso
             TarifasAccesoSeeder::class,
             // Creamos los equipos de venta
-            EquiposVentaSeeder::class
+            EquiposVentaSeeder::class,
+            // Inicializamos los estados de los contratos
+            EstadosContratoSeeder::class,
+
+
+            // Primero ejecutamos ShieldSeeder para generar los roles y permisos
+            ShieldSeeder::class,
+            // Luego creamos el usuario admin y le asignamos el rol
+            CreateAdminUserSeeder::class,
         ]);
 
     }
