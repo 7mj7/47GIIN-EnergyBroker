@@ -36,7 +36,12 @@ class EstadoContratoResource extends Resource
                 Section::make('')->schema([
                     Forms\Components\TextInput::make('nombre')
                         ->required()
-                        ->maxLength(15),
+                        ->label('Nombre')
+                        ->unique(ignoreRecord: true)
+                        ->maxLength(15)
+                        ->validationMessages([
+                            'unique' => 'Ya existe un estado de contrato con el mismo nombre. Por favor, elige otro.',
+                        ]),
                     Forms\Components\Toggle::make('activo')
                         ->inline(false)
                         ->default(true)
