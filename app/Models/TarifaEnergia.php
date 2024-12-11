@@ -33,6 +33,12 @@ class TarifaEnergia extends Model
         'pe_p4',
         'pe_p5',
         'pe_p6',
+        // Término fijo de gas
+        'tf',
+        // Término variable de gas
+        'tv',
+        // Remuneración de los contratos indexados
+        'rem_index',
     ];
 
     protected $casts = [

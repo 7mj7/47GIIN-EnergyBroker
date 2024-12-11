@@ -36,6 +36,11 @@ class TarifaEnergiaResource extends Resource
         return 'Tarifas de Energía';
     }
 
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -56,7 +61,11 @@ class TarifaEnergiaResource extends Resource
                             ->relationship('comercializadora', 'nombre') // name, titleAttribute
                             ->preload()
                             ->searchable()
-                            ->required(),
+                            ->required()
+                            ->validationMessages([
+                                'required' => 'La comercializadora es obligatoria',
+                            ])
+                            ->columnSpan(2),
                         Select::make('tarifa_acceso_id')
                             ->relationship(name: 'tarifaAcceso', titleAttribute: 'nombre')
                             ->required()
@@ -64,7 +73,6 @@ class TarifaEnergiaResource extends Resource
                             ->afterStateUpdated(function ($state, callable $set) {
                                 if ($state) {
                                     $tarifaAcceso = TarifaAcceso::find($state);
-                                    //dd($tarifaAcceso->tipo_energia->value); // Mostrar alerta con el valor de tipo_energia
                                     $set('tipo_energia', $tarifaAcceso->tipo_energia->value);
                                 }
                             })
@@ -74,11 +82,13 @@ class TarifaEnergiaResource extends Resource
                                     $set('tipo_energia', $tarifaAcceso->tipo_energia->value);
                                 }
                             }),
-                        Forms\Components\Hidden::make('tipo_energia'),
+                        Forms\Components\Hidden::make('tipo_energia'), // Para almacenar el tipo de energía
                         Select::make('tipo_tarifa')
                             ->label('Tipo de Tarifa')
                             ->options(TiposTarifaEnergia::class)
-                            ->required(),
+                            ->default('F')
+                            ->required()
+                            ->reactive(),
                         Forms\Components\DatePicker::make('valida_desde')
                             ->label('Válida Desde')
                             ->default(now())
@@ -137,6 +147,7 @@ class TarifaEnergiaResource extends Resource
                             ]),
                         Fieldset::make('Energia: cent(€)/kWh')
                             ->columns(6)
+                            ->visible(fn(callable $get) => $get('tipo_tarifa') === 'F')
                             ->schema([
                                 Forms\Components\TextInput::make('pe_p1')
                                     ->label('P1')
@@ -175,10 +186,47 @@ class TarifaEnergiaResource extends Resource
                                     ->step(0.000001)  // Define 6 decimales
                                     ->rules('numeric|min:0'),
                             ]),
+                        Fieldset::make('Energia: cent(€)/kWh')
+                            ->columns(6)
+                            ->visible(fn(callable $get) => $get('tipo_tarifa') === 'I')
+                            ->schema([
+                                Forms\Components\TextInput::make('rem_index')
+                                    ->label('Remuneración/GO')
+                                    ->suffix('€/kWh')
+                                    ->inlineLabel()
+                                    ->numeric()
+                                    ->step(0.000001)  // Define 6 decimales
+                                    ->rules('numeric|min:0'),
+                            ])->columns(2)
                     ])->columns(6),
                 Section::make('Precios de Gas')
                     ->visible(fn(callable $get) => $get('tipo_energia') === 'G')
-                    ->schema([]),
+                    ->schema([
+                        Forms\Components\TextInput::make('tf')
+                            ->label('Término Fijo')
+                            ->suffix('€/mes')
+                            ->inlineLabel()
+                            ->numeric()
+                            ->step(0.000001)  // Define 6 decimales
+                            ->rules('numeric|min:0'),
+                        Forms\Components\TextInput::make('tv')
+                            ->visible(fn(callable $get) => $get('tipo_tarifa') === 'F')
+                            ->label('Término Variable')
+                            ->suffix('€/kWh')
+                            ->inlineLabel()
+                            ->numeric()
+                            ->step(0.000001)  // Define 6 decimales
+                            ->rules('numeric|min:0'),
+                        Forms\Components\TextInput::make('rem_index')
+                            ->visible(fn(callable $get) => $get('tipo_tarifa') === 'I')
+                            ->label('Remuneración/GO')
+                            ->suffix('€/kWh')
+                            ->inlineLabel()
+                            ->numeric()
+                            ->step(0.000001)  // Define 6 decimales
+                            ->rules('numeric|min:0'),
+                    ])
+                    ->columns(2),
             ]);
     }
     public static function table(Table $table): Table
@@ -270,4 +318,5 @@ class TarifaEnergiaResource extends Resource
             'edit' => Pages\EditTarifaEnergia::route('/{record}/edit'),
         ];
     }
+
 }
