@@ -13,6 +13,11 @@ class Contrato extends Model
     protected $fillable = [
         'tercero_id',
         'suministro_id',
+        'nif_titular',
+        'nombre_titular',
+        'telefono1',
+        'telefono2',
+        'email',
     ];
 
     // Relaciones

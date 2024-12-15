@@ -4,13 +4,16 @@ namespace App\Filament\Admin\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
+use App\Models\Tercero;
 use App\Models\Contrato;
 use Filament\Forms\Form;
 use App\Models\Suministro;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Actions\Action;
@@ -18,8 +21,6 @@ use Filament\Forms\Components\Actions\CreateAction;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Admin\Resources\ContratoResource\Pages;
 use App\Filament\Admin\Resources\ContratoResource\RelationManagers;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
 
 class ContratoResource extends Resource
 {
@@ -40,6 +41,8 @@ class ContratoResource extends Resource
                 Grid::make(2) // Crea un grid de 2 columnas
                     ->schema([
                         Section::make('Tercero')
+                            ->compact()
+                            ->columns(3)
                             ->schema([
                                 // Campos de la primera sección
                                 Select::make('tercero_id')
@@ -47,10 +50,23 @@ class ContratoResource extends Resource
                                         return $query->where('user_id', auth()->id());
                                     })
                                     ->label('Tercero')
+                                    ->placeholder('Seleccionar Tercero')
+                                    ->columnSpanFull()
                                     ->searchable()
-                                    ->live()
-                                    ->afterStateUpdated(function (callable $set) {
-                                        $set('suministro_id', null); // Limpia el campo suministro
+                                    ->live() // Importante para la reactividad
+                                    ->afterStateUpdated(function (callable $set, $state) {
+                                        if ($state) {
+                                            $tercero = Tercero::find($state);
+                                            if ($tercero) {
+                                                $set('nif_titular', $tercero->nif);
+                                                $set('nombre_titular', $tercero->nombre);
+                                            }
+                                        } else {
+                                            // Limpiar todos los campos cuando no hay tercero seleccionado
+                                            $set('suministro_id', null);
+                                            $set('nif_titular', null);
+                                            $set('nombre_titular', null);
+                                        }
                                     })
                                     ->required()
                                     ->createOptionForm([
@@ -72,10 +88,21 @@ class ContratoResource extends Resource
                                             ->modalSubmitActionLabel('Crear Tercero')
                                             ->successNotificationTitle('Tercero creado correctamente');
                                     }),
+                                TextInput::make('nif_titular')
+                                    ->label('NIF del Titular')
+                                    ->readOnly()
+                                    ->required()
+                                    ->maxLength(9),
+                                Textinput::make('nombre_titular')
+                                    ->required()
+                                    ->readOnly()
+                                    ->columnSpan(2)
+                                    ->maxLength(255),
                             ])
                             ->columnSpan(1), // Ocupa 1 columna
 
                         Section::make('Suministro')
+                            ->compact()
                             ->schema([
                                 // Campos de la segunda sección
                                 Select::make('suministro_id')

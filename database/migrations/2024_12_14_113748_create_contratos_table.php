@@ -15,6 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('tercero_id')->constrained()->restrictOnDelete();
             $table->foreignId('suministro_id')->constrained()->restrictOnDelete();
+            $table->string('nif_titular',15)->nullable();
+            $table->string('nombre_titular');
+            $table->string('telefono1',30)->nullable();
+            $table->string('telefono2',30)->nullable();
+            $table->string('email')->nullable();
             $table->timestamps();
         });
     }
