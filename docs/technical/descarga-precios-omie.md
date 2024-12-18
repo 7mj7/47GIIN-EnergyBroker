@@ -27,7 +27,7 @@ En routes/console.php se define la programación de la tarea automatizada.
 El comando se puede programar para ejecutarse en intervalos específicos usando el programador de tareas de Laravel:
 ```php
 // routes/console.php
-$schedule->command('omie:descargar-precios')->dailyAt('01:00');
+$schedule->command('omie:descargar-precios-horarios')->dailyAt('01:00');
 ```
 
 ## 5 Uso
