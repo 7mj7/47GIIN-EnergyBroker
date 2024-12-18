@@ -1,0 +1,45 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('contratos', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('tercero_id')->constrained()->restrictOnDelete();
+            $table->foreignId('suministro_id')->constrained()->restrictOnDelete();
+            
+            // Titular
+            $table->string('nif_titular',15)->nullable();
+            $table->string('nombre_titular');
+            $table->string('telefono1',30)->nullable();
+            $table->string('telefono2',30)->nullable();
+            $table->string('email')->nullable();
+            // Suministro
+            $table->string('cups',20);
+            $table->string('tarifa_acceso',15);
+            $table->integer('consumo_anual')->nullable(); // Añadir el campo entero para el consumo
+            $table->string('direccion');
+            $table->string('codigo_postal',5);
+            $table->string('poblacion');
+            $table->string('provincia');
+
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('contratos');
+    }
+};
