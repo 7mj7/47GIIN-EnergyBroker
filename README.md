@@ -85,3 +85,5 @@ La aplicación estará disponible en http://localhost:8000
   - [Supervisor y Workers](docs/technical/supervisor-setup.md)
 - **Extensiones PHP**
   - [Configuración PCNTL](docs/technical/extensions/pcntl.md)
+- **Procesos Automáticos**
+  - [Descarga de precios OMIE](docs/technical/automated-tasks/descarga-precios-omie.md)
