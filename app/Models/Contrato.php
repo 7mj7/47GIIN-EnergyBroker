@@ -4,9 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Parallax\FilamentComments\Models\Traits\HasFilamentComments;
 
 class Contrato extends Model
 {
+
+    use HasFilamentComments;
 
     protected $table = 'contratos';
 
