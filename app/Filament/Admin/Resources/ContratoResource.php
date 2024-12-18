@@ -27,7 +27,7 @@ class ContratoResource extends Resource
 {
     protected static ?string $model = Contrato::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-pencil-square';
 
     public static function getNavigationBadge(): ?string
     {
@@ -38,24 +38,22 @@ class ContratoResource extends Resource
     {
         return $form
             ->schema([
-
-                Grid::make(2) // Crea un grid de 2 columnas
-                    ->schema([
-                        Section::make('Tercero')
-                            ->compact()
-                            ->columnSpan(1) // Ocupa 1 columna
-                            ->columns(3)
-                            ->schema(static::getTerceroSchema()),
-                        Section::make('Suministro')
-                            ->compact()
-                            ->columnSpan(1) // Ocupa 1 columna
-                            ->schema(static::getSuministroSchema()),
-                    ]),
-
+                // Titular
+                Section::make('Tercero')
+                    ->compact()
+                    ->columnSpanFull()
+                    ->columns(6)
+                    ->schema(static::getTerceroSchema()),
+                // Suministgro
+                Section::make('Suministro')
+                    ->compact()
+                    ->columnSpanFull()
+                    ->columns(6)
+                    ->schema(static::getSuministroSchema()),
+                // Contrato
                 Section::make('Contrato')
                     ->compact()
                     ->schema(static::getContratoSchema()),
-
 
             ]);
     }
@@ -70,7 +68,7 @@ class ContratoResource extends Resource
                 })
                 ->label('Tercero')
                 ->placeholder('Seleccionar Tercero')
-                ->columnSpanFull()
+                ->columnSpan(2)
                 ->searchable()
                 ->live() // Importante para la reactividad
                 ->afterStateUpdated(function (callable $set, $state) {
@@ -89,18 +87,25 @@ class ContratoResource extends Resource
                 })
                 ->required()
                 ->createOptionForm([
-                    TextInput::make('nif')
-                        ->label('NIF/CIF')
-                        ->required()
-                        ->maxLength(9),
-                    TextInput::make('nombre')
-                        ->required()
-                        ->maxLength(255),
-                    TextInput::make('email')
-                        ->email()
-                        ->required(),
-                    TextInput::make('telefono')
-                        ->tel(),
+                    Section::make()
+                        ->columns(3)
+                        ->schema([
+                            TextInput::make('nif')
+                                ->label('NIF/CIF')
+                                ->required()
+                                ->maxLength(9),
+                            TextInput::make('nombre')
+                                ->label('Nombre')
+                                ->columnSpan(2)
+                                ->required()
+                                ->maxLength(255),
+                            TextInput::make('telefono')
+                                ->tel(),
+                            TextInput::make('email')
+                                ->columnSpan(2)
+                                ->email(),
+                        ]),
+
                     Hidden::make('user_id')
                         ->default(fn() => auth()->id()),
                 ])
@@ -131,6 +136,7 @@ class ContratoResource extends Resource
             // Campos de la segunda sección
             //static::getSuministroSchema()
             Select::make('suministro_id')
+                ->columnSpan(3)
                 ->label('Suministro')
                 ->options(function (callable $get) {
                     $terceroId = $get('tercero_id');
@@ -152,7 +158,48 @@ class ContratoResource extends Resource
                 })
                 ->searchable()
                 ->required()
-                ->preload(),
+                ->preload()
+                ->live()
+                ->afterStateUpdated(function (callable $set, $state) {
+                    if ($state) {
+                        $suministro = Suministro::find($state);
+                        if ($suministro) {
+                            $set('cups', $suministro->cups);
+                            $set('tarifa_acceso', $suministro->tarifaAcceso->nombre);
+                            $set('consumo_anual', $suministro->consumo_anual);
+                            $set('direccion', $suministro->direccion);
+                            $set('codigo_postal', $suministro->codigo_postal);
+                            $set('poblacion', $suministro->poblacion);
+                            $set('provincia', $suministro->provincia);
+                        }
+                    } else {
+                        // Limpiar todos los campos cuando no hay tercero seleccionado
+                        $set('cups', null);
+                        $set('tarifa_acceso', null);
+                        $set('consumo_anual', null);
+                        $set('direccion', null);
+                        $set('codigo_postal', null);
+                        $set('poblacion', null);
+                        $set('provincia', null);
+                    }
+                })
+                ->createOptionForm([
+                    Section::make()
+                        ->columns(3)
+                        ->schema([
+                            // Schema del suministro
+                        ]),
+
+                    Hidden::make('user_id')
+                        ->default(fn() => auth()->id()),
+                ])
+                ->createOptionAction(function (Action $action) {
+                    $action
+                        ->modalHeading('Crear Nuevo Suministro')
+                        ->label('Crear Suministro')
+                        ->modalSubmitActionLabel('Crear Suministro')
+                        ->successNotificationTitle('Suministro creado correctamente');
+                }),
 
             Grid::make(3) // Crea un grid de 3 columnas
                 ->schema([
@@ -171,6 +218,26 @@ class ContratoResource extends Resource
                         //->required()
                         ->readOnly()
                         ->numeric(),
+                ]),
+            Grid::make(3) // Crea un grid de 3 columnas
+                ->schema([
+                    TextInput::make('direccion')
+                        ->columnSpan(3)
+                        ->label('Dirección')
+                        ->required()
+                        ->maxLength(255),
+                    TextInput::make('codigo_postal')
+                        ->label('C.P.')
+                        ->required()
+                        ->maxLength(5),
+                    TextInput::make('poblacion')
+                        ->label('Población')
+                        ->required()
+                        ->maxLength(255),
+                    TextInput::make('provincia')
+                        ->label('Provincia')
+                        ->required()
+                        ->maxLength(255),
                 ]),
         ];
     }

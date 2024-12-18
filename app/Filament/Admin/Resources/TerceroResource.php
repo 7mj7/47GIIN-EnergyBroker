@@ -21,7 +21,7 @@ class TerceroResource extends Resource
 {
     protected static ?string $model = Tercero::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-user-circle';
 
 
     // Solo contamos los terceros del usuario actual
