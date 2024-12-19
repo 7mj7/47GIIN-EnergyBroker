@@ -127,6 +127,19 @@ class PrecioHorarioMercadoDiarioResource extends Resource
                                 fn(Builder $query, $date) =>
                                 $query->whereRaw('CAST(CONCAT(anio, "-", mes, "-", dia) AS DATE) <= ?', [$date])
                             );
+                    })
+                    ->indicateUsing(function (array $data): array {
+                        $indicators = [];
+
+                        if ($data['fecha_desde'] ?? null) {
+                            $indicators[] = 'Desde ' . $data['fecha_desde'];
+                        }
+
+                        if ($data['fecha_hasta'] ?? null) {
+                            $indicators[] = 'Hasta ' . $data['fecha_hasta'];
+                        }
+
+                        return $indicators;
                     }),
             ])
             ->actions([
