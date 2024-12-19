@@ -2,16 +2,18 @@
 
 namespace App\Filament\Admin\Resources;
 
+use Filament\Forms;
+use Filament\Tables;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Filament\Tables\Filters\Filter;
+use Filament\Forms\Components\DatePicker;
+use Illuminate\Database\Eloquent\Builder;
+use App\Models\PrecioHorarioMercadoDiario;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Admin\Resources\PrecioHorarioMercadoDiarioResource\Pages;
 use App\Filament\Admin\Resources\PrecioHorarioMercadoDiarioResource\RelationManagers;
-use App\Models\PrecioHorarioMercadoDiario;
-use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class PrecioHorarioMercadoDiarioResource extends Resource
 {
@@ -25,7 +27,7 @@ class PrecioHorarioMercadoDiarioResource extends Resource
     protected static ?string $modelLabel = 'Precio Horario Mercado Diario';
     protected static ?string $pluralModelLabel = 'Precios Horarios Mercado Diario';
 
-    
+
 
 
     public static function getNavigationBadge(): ?string
@@ -89,12 +91,12 @@ class PrecioHorarioMercadoDiarioResource extends Resource
                 Tables\Columns\TextColumn::make('marginalPT')
                     ->label('Marginal PT')
                     ->numeric()
-                    ->formatStateUsing(fn ($state) => number_format($state, 2, ',', '.'))
+                    ->formatStateUsing(fn($state) => number_format($state, 2, ',', '.'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('marginalES')
-                    ->label('Marginal ES')                    
+                    ->label('Marginal ES')
                     ->numeric()
-                    ->formatStateUsing(fn ($state) => number_format($state, 2, ',', '.'))
+                    ->formatStateUsing(fn($state) => number_format($state, 2, ',', '.'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -106,7 +108,26 @@ class PrecioHorarioMercadoDiarioResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Filter::make('fecha')
+                    ->form([
+                        DatePicker::make('fecha_desde')
+                            ->label('Desde'),
+                        DatePicker::make('fecha_hasta')
+                            ->label('Hasta'),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['fecha_desde'],
+                                fn(Builder $query, $date) =>
+                                $query->whereRaw('CAST(CONCAT(anio, "-", mes, "-", dia) AS DATE) >= ?', [$date])
+                            )
+                            ->when(
+                                $data['fecha_hasta'],
+                                fn(Builder $query, $date) =>
+                                $query->whereRaw('CAST(CONCAT(anio, "-", mes, "-", dia) AS DATE) <= ?', [$date])
+                            );
+                    }),
             ])
             ->actions([
                 //Tables\Actions\EditAction::make(),
