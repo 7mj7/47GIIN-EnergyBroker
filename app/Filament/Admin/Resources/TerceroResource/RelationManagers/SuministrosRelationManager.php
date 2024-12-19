@@ -87,6 +87,8 @@ class SuministrosRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('consumo_anual')
                     ->label('Consumo Anual (kWh)')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('direccion')
+                    ->label('Dirección'),
                 Tables\Columns\TextColumn::make('codigo_postal')
                     ->label('C.P.')
                     ->sortable(),
