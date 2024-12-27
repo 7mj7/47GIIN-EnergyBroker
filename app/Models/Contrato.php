@@ -30,6 +30,12 @@ class Contrato extends Model
         'codigo_postal',
         'poblacion',
         'provincia',
+        // Tarifa
+        'comercializadora_id',
+        'tarifa_energia_id',
+        'fecha_firma',
+        'fecha_activacion',
+        'fecha_baja',
     ];
 
     // Relaciones
@@ -41,5 +47,15 @@ class Contrato extends Model
     public function suministro(): BelongsTo
     {
         return $this->belongsTo(Suministro::class);
+    }
+
+    public function comercializadora(): BelongsTo
+    {
+        return $this->belongsTo(Comercializadora::class);
+    }
+
+    public function tarifaEnergia(): BelongsTo
+    {
+        return $this->belongsTo(TarifaEnergia::class);
     }
 }

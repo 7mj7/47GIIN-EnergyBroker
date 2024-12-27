@@ -2,6 +2,7 @@
 
 namespace App\Filament\Admin\Resources;
 
+use DateTime;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Tercero;
@@ -14,14 +15,15 @@ use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Actions\CreateAction;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Admin\Resources\ContratoResource\Pages;
 use App\Filament\Admin\Resources\ContratoResource\RelationManagers;
-use Filament\Tables\Columns\TextColumn;
 
 class ContratoResource extends Resource
 {
@@ -53,6 +55,8 @@ class ContratoResource extends Resource
                 // Contrato
                 Section::make('Contrato')
                     ->compact()
+                    ->columnSpanFull()
+                    ->columns(4)
                     ->schema(static::getContratoSchema()),
 
             ]);
@@ -244,7 +248,58 @@ class ContratoResource extends Resource
 
     protected static function getContratoSchema(): array
     {
-        return [];
+        return [
+            Select::make('comercializadora_id')
+                ->label('Comercialidad')
+                //->relationship(name: 'comercializadora', titleAttribute: 'nombre')
+                ->relationship('comercializadora', 'nombre', function ($query) {
+                    $query->where('activo', 1);
+                })
+                ->required()
+                ->preload()
+                ->searchable()
+                ->required()
+                ->getOptionLabelUsing(function ($value) {
+                    // Verifica si el valor proporcionado es nulo.
+                    // Si es nulo, retorna null para que no se muestre ninguna etiqueta.
+                    if (is_null($value)) {
+                        return null;
+                    }
+                    // Busca la comercializadora en la base de datos utilizando el ID proporcionado.
+                    // Esta búsqueda no filtra por el estado 'activo', lo que permite obtener
+                    // la comercializadora incluso si no está activa.
+                    $comercializadora = \App\Models\Comercializadora::find($value);
+
+                    // Si se encuentra la comercializadora, retorna su nombre.
+                    // Si no se encuentra (puede que el ID no exista), retorna null.
+                    return $comercializadora ? $comercializadora->nombre : null;
+                }),
+            Select::make('tarifa_energia_id')
+                ->columnSpan(2)
+                ->label('Tarifa de Energía')
+                ->relationship('tarifaEnergia', 'nombre', function ($query) {
+                    $query->where('activo', 1);
+                })
+                ->getOptionLabelUsing(function ($value) {
+                    if (is_null($value)) {
+                        return null;
+                    }
+                    $tarifaEnergia = \App\Models\TarifaEnergia::find($value);
+                    return $tarifaEnergia ? $tarifaEnergia->nombre : null;
+                })
+                ->required()
+                ->preload()
+                ->searchable(),
+            DatePicker::make('fecha_firma')
+                ->label('Fecha de Firma')
+                ->default(now())
+                ->required(),
+            DatePicker::make('fecha_activacion')
+                ->label('Fecha de Activación'),
+            DatePicker::make('fecha_baja')
+                ->label('Fecha de Baja'),
+
+        ];
     }
 
 

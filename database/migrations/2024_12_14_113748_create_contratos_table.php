@@ -30,6 +30,12 @@ return new class extends Migration
             $table->string('codigo_postal',5);
             $table->string('poblacion');
             $table->string('provincia');
+            // Tarifa
+            $table->foreignId('comercializadora_id')->constrained()->restrictOnDelete();
+            $table->foreignId('tarifa_energia_id')->constrained('tarifas_energia')->restrictOnDelete();
+            $table->date('fecha_firma')->nullable();
+            $table->date('fecha_activacion')->nullable();
+            $table->date('fecha_baja')->nullable();
 
             $table->timestamps();
         });
