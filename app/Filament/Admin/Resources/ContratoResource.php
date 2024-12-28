@@ -18,6 +18,7 @@ use Filament\Forms\Components\Section;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Actions\CreateAction;
@@ -325,7 +326,7 @@ class ContratoResource extends Resource
                 ->placeholder('ES00XXXXXX12345678901234') // Placeholder ejemplo
                 ->helperText('Introduce un IBAN válido. Ejemplo: ES9121000418450200051332')
                 ->maxLength(24) // Longitud máxima del IBAN español    
-                ->autocomplete(false)                                        
+                ->autocomplete(false)
                 ->rules([
                     'regex:/^ES\d{22}$/', // Regex para validar IBAN español
                     'iban_valido'
@@ -354,13 +355,39 @@ class ContratoResource extends Resource
                     ->sortable(),
                 TextColumn::make('nombre_titular')
                     ->label('Titular')
-                    ->sortable(),
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('cups')
                     ->label('CUPS')
+                    ->sortable()
+                    ->searchable()
+                    ->formatStateUsing(fn(string $state): string => substr($state, -6)),
+                TextColumn::make('tarifa_acceso')
+                    ->label('Tarifa de Acceso')
+                    ->sortable(),
+                TextColumn::make('consumo_anual')
+                    ->label('Consumo Anual (kWh)')
+                    ->sortable(),
+                TextColumn::make('comercializadora.nombre')
+                    ->label('Comercializadora')
+                    ->sortable(),
+                TextColumn::make('tarifaEnergia.nombre')
+                    ->label('Tarifa de Energía')
                     ->sortable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('tarifa_acceso')
+                    ->label('Tarifa de Acceso')
+                    ->multiple()
+                    ->options(function () {
+                        return Contrato::query()
+                            ->select('tarifa_acceso')
+                            ->distinct()
+                            ->orderBy('tarifa_acceso')
+                            ->pluck('tarifa_acceso', 'tarifa_acceso')
+                            ->toArray();
+                    })
+                    ->placeholder('Seleccione una Tarifa'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
