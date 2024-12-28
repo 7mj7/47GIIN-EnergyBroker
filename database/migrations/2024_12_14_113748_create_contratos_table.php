@@ -37,6 +37,9 @@ return new class extends Migration
             $table->date('fecha_activacion')->nullable();
             $table->date('fecha_baja')->nullable();
 
+            // Cuenta Bancaria            
+            $table->string('iban', 34)->nullable();
+
             $table->timestamps();
         });
     }

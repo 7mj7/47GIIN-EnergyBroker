@@ -36,6 +36,9 @@ class Contrato extends Model
         'fecha_firma',
         'fecha_activacion',
         'fecha_baja',
+        // Otros
+        'iban', // Cuenta bancaria
+
     ];
 
     // Relaciones

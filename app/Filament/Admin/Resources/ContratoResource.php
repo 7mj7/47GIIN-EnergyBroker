@@ -258,7 +258,10 @@ class ContratoResource extends Resource
                 ->required()
                 ->preload()
                 ->searchable()
-                ->required()
+                ->reactive() // Hace que el campo sea reactivo
+                ->afterStateUpdated(function (callable $set) {
+                    $set('tarifa_energia_id', null); // Limpia tarifa_energia_id al cambiar comercializadora_id
+                })
                 ->getOptionLabelUsing(function ($value) {
                     // Verifica si el valor proporcionado es nulo.
                     // Si es nulo, retorna null para que no se muestre ninguna etiqueta.
@@ -277,8 +280,30 @@ class ContratoResource extends Resource
             Select::make('tarifa_energia_id')
                 ->columnSpan(2)
                 ->label('Tarifa de Energía')
-                ->relationship('tarifaEnergia', 'nombre', function ($query) {
-                    $query->where('activo', 1);
+                //->relationship('tarifaEnergia', 'nombre', function ($query) {
+                //    $query->where('activo', 1);
+                //})
+                ->relationship('tarifaEnergia', 'nombre', function ($query, callable $get) {
+                    $comercializadoraId = $get('comercializadora_id');
+                    if ($comercializadoraId) {
+                        $query->where('activo', 1)
+                            ->where('comercializadora_id', $comercializadoraId);
+                    } else {
+                        // Si no hay comercializadora seleccionada, no devolver resultados
+                        $query->whereRaw('0 = 1');
+                    }
+                })
+                ->disabled(function (callable $get) {
+                    // Deshabilita el select si no hay tarifas disponibles
+                    $comercializadoraId = $get('comercializadora_id');
+                    if (!$comercializadoraId) {
+                        return true;
+                    }
+
+                    // Verifica si existen tarifas activas para la comercializadora seleccionada
+                    return !\App\Models\TarifaEnergia::where('activo', 1)
+                        ->where('comercializadora_id', $comercializadoraId)
+                        ->exists();
                 })
                 ->getOptionLabelUsing(function ($value) {
                     if (is_null($value)) {
@@ -294,6 +319,23 @@ class ContratoResource extends Resource
                 ->label('Fecha de Firma')
                 ->default(now())
                 ->required(),
+            TextInput::make('iban')
+                ->label('IBAN')
+                ->columnSpan(2)
+                ->placeholder('ES00XXXXXX12345678901234') // Placeholder ejemplo
+                ->helperText('Introduce un IBAN válido. Ejemplo: ES9121000418450200051332')
+                ->maxLength(24) // Longitud máxima del IBAN español    
+                ->autocomplete(false)                                        
+                ->rules([
+                    'regex:/^ES\d{22}$/', // Regex para validar IBAN español
+                    'iban_valido'
+                ])
+                ->reactive()
+                ->afterStateUpdated(function ($state, callable $set) {
+                    // Limpia espacios y convierte a mayúsculas
+                    $cleaned = strtoupper(str_replace(' ', '', $state));
+                    $set('iban', $cleaned); // Asegúrate de pasar el nombre del campo y el valor
+                }),
             DatePicker::make('fecha_activacion')
                 ->label('Fecha de Activación'),
             DatePicker::make('fecha_baja')
