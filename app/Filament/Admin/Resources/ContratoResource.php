@@ -393,6 +393,28 @@ class ContratoResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+
+                Tables\Actions\Action::make('printRecord')
+                    ->label('PDF')
+                    ->color('success')
+                    ->icon('heroicon-o-printer')
+                    ->tooltip('Imprimir Contrato')
+                    ->action(function (Contrato $record) {
+
+                        // Obtener los comentarios relacionados
+                        $comments = $record->filamentComments()->with('user')->get();
+
+
+                        $pdf = Pdf::loadView('pdf.contrato-show', [
+                            'record' => $record,
+                            'comments' => $comments
+                        ]);
+
+                        return response()->streamDownload(function () use ($pdf) {
+                            echo $pdf->output();
+                        }, "contrato-{$record->id}.pdf");
+                    }),
+
             ])
             ->headerActions([
                 Tables\Actions\Action::make('exportPDF')
