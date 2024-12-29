@@ -10,11 +10,13 @@ use App\Models\Contrato;
 use Filament\Forms\Form;
 use App\Models\Suministro;
 use Filament\Tables\Table;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Section;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
@@ -392,9 +394,39 @@ class ContratoResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
+            ->headerActions([
+                Tables\Actions\Action::make('exportPDF')
+                    ->label('PDF')
+                    ->icon('heroicon-o-printer')
+                    ->action(function ($livewire) {
+                        // Obtener los registros filtrados
+                        $records = $livewire->getFilteredTableQuery()->get();
+
+                        $pdf = Pdf::loadView('pdf.contratos-list', [
+                            'records' => $records
+                        ]);
+
+                        return response()->streamDownload(function () use ($pdf) {
+                            echo $pdf->output();
+                        }, 'contratos.pdf');
+                    })
+            ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+
+                    BulkAction::make('exportPDF')
+                        ->label('Exportar a PDF')
+                        ->icon('heroicon-o-printer')
+                        ->action(function ($records) {
+                            $pdf = Pdf::loadView('pdf.contratos-list', [
+                                'records' => $records
+                            ]);
+
+                            return response()->streamDownload(function () use ($pdf) {
+                                echo $pdf->output();
+                            }, 'registros.pdf');
+                        })
                 ]),
             ]);
     }
