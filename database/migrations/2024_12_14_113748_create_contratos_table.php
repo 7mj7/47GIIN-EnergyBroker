@@ -13,21 +13,31 @@ return new class extends Migration
     {
         Schema::create('contratos', function (Blueprint $table) {
             $table->id();
+
+            // Datos Generales
+            //$table->foreignId('estado_id')->constrained()->restrictOnDelete();
+            $table->foreignId('estado_contrato_id')
+                ->nullable()
+                ->constrained('estados_contrato')
+                ->nullOnDelete();
+            $table->date('fecha_estado')->nullable();
+
+            // Códigos de Tercero y de Suministro
             $table->foreignId('tercero_id')->constrained()->restrictOnDelete();
             $table->foreignId('suministro_id')->constrained()->restrictOnDelete();
-            
+
             // Titular
-            $table->string('nif_titular',15)->nullable();
+            $table->string('nif_titular', 15)->nullable();
             $table->string('nombre_titular');
-            $table->string('telefono1',30)->nullable();
-            $table->string('telefono2',30)->nullable();
+            $table->string('telefono1', 30)->nullable();
+            $table->string('telefono2', 30)->nullable();
             $table->string('email')->nullable();
             // Suministro
-            $table->string('cups',20);
-            $table->string('tarifa_acceso',15);
+            $table->string('cups', 20);
+            $table->string('tarifa_acceso', 15);
             $table->integer('consumo_anual')->nullable(); // Añadir el campo entero para el consumo
             $table->string('direccion');
-            $table->string('codigo_postal',5);
+            $table->string('codigo_postal', 5);
             $table->string('poblacion');
             $table->string('provincia');
             // Tarifa

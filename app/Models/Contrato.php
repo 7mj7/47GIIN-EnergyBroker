@@ -14,6 +14,11 @@ class Contrato extends Model
     protected $table = 'contratos';
 
     protected $fillable = [
+        // Datos Generales
+        'estado_contrato_id',
+        'fecha_estado',
+
+        // Códigos de Tercero y de Suministro
         'tercero_id',
         'suministro_id',
         // Titular
@@ -61,4 +66,10 @@ class Contrato extends Model
     {
         return $this->belongsTo(TarifaEnergia::class);
     }
+
+    public function estadoContrato(): BelongsTo
+    {
+        return $this->belongsTo(EstadoContrato::class);
+    }
+    
 }

@@ -27,6 +27,7 @@ use Filament\Forms\Components\Actions\CreateAction;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Admin\Resources\ContratoResource\Pages;
 use App\Filament\Admin\Resources\ContratoResource\RelationManagers;
+use Illuminate\Support\Facades\Date;
 
 class ContratoResource extends Resource
 {
@@ -43,6 +44,12 @@ class ContratoResource extends Resource
     {
         return $form
             ->schema([
+                Section::make('General')
+                    ->compact()
+                    ->columnSpanFull()
+                    ->columns(6)
+                    ->schema(static::getGeneralSchema()),
+
                 // Titular
                 Section::make('Tercero')
                     ->compact()
@@ -63,6 +70,27 @@ class ContratoResource extends Resource
                     ->schema(static::getContratoSchema()),
 
             ]);
+    }
+
+    protected static function getGeneralSchema(): array
+    {
+        return [
+            Select::make('estado_contrato_id')
+                ->label('Estado')
+                ->required()
+                ->relationship('estadoContrato', 'nombre')
+                ->default(fn () => \App\Models\EstadoContrato::orderBy('id')->first()?->id)
+                ->preload()
+                ->searchable()
+                ->afterStateUpdated(function ($state, Forms\Set $set) {
+                    $set('fecha_estado', now()->format('Y-m-d'));
+                }),
+            DatePicker::make('fecha_estado')
+                ->label('Fecha Estado')
+                ->default(fn () => Date::now())
+                ->readOnly()
+                ->required(),
+        ];
     }
 
     protected static function getTerceroSchema(): array
@@ -283,6 +311,9 @@ class ContratoResource extends Resource
             Select::make('tarifa_energia_id')
                 ->columnSpan(2)
                 ->label('Tarifa de Energía')
+                ->validationMessages([
+                    'required' => 'Por favor, seleccione una tarifa de energía.',
+                ])
                 //->relationship('tarifaEnergia', 'nombre', function ($query) {
                 //    $query->where('activo', 1);
                 //})
