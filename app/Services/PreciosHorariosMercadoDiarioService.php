@@ -119,7 +119,9 @@ class PreciosHorariosMercadoDiarioService
     // PBDC :  Programa Diario Base de Casación
     private function descargarPBDC(string $fecha, string $version): ?string
     {
-        $urlBase = "https://www.omie.es/es/file-download?parents%5B0%5D=marginalpdbc&filename=marginalpdbc_{$fecha}";
+        //$urlBase = "https://www.omie.es/es/file-download?parents%5B0%5D=marginalpdbc&filename=marginalpdbc_{$fecha}";
+        //"https://www.omie.es/es/file-download?parents=marginalpdbc&filename=marginalpdbc_20250105.1
+        $urlBase = "https://www.omie.es/es/file-download?parents=marginalpdbc&filename=marginalpdbc_{$fecha}";
         $url = $urlBase . $version;
 
     
