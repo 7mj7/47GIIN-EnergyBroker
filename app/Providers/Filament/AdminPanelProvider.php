@@ -66,6 +66,14 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->plugins([
                 \BezhanSalleh\FilamentShield\FilamentShieldPlugin::make(),
-            ]);
+                \FilipFonal\FilamentLogManager\FilamentLogManager::make(),
+            ])
+            ->navigationGroups([
+                'Tablas',
+                'Seguridad',
+                'Sistema',
+            ])
+            
+            ;
     }
 }
