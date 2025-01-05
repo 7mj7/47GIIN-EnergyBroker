@@ -281,12 +281,15 @@ class ContratoResource extends Resource
     {
         return [
             Select::make('comercializadora_id')
-                ->label('Comercialidad')
+                ->label('Comercializadora')
                 //->relationship(name: 'comercializadora', titleAttribute: 'nombre')
                 ->relationship('comercializadora', 'nombre', function ($query) {
                     $query->where('activo', 1);
                 })
                 ->required()
+                ->validationMessages([
+                    'required' => 'Por favor, seleccione una comercializadora.',
+                ])
                 ->preload()
                 ->searchable()
                 ->reactive() // Hace que el campo sea reactivo
